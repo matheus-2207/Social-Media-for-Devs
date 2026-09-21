@@ -1,0 +1,22 @@
+.codeBlock,
+.codeBlock code:global(.hljs) {
+  color: #e6edf3;
+  background-color: #0d1117;
+}
+
+/* O pre controla o espaçamento e a rolagem; o tema colore os tokens. */
+.codeBlock code:global(.hljs) {
+  display: block;
+  padding: 0;
+  overflow: visible;
+}
+
+.codeBlock :global(.hljs-comment),
+.codeBlock :global(.hljs-code),
+.codeBlock :global(.hljs-formula) {
+  color: #a5adb8;
+}
+
+.codeBlock :global(.hljs-section) {
+  color: #79c0ff;
+}

@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ReactionType {
+  FUNCIONA
+  CLEAN_CODE
+  DUVIDOSO
+}
+
+model User {
+  id             String     @id @default(cuid())
+  name           String
+  username       String     @unique
+  email          String     @unique
+  passwordHash   String
+  bio            String?
+  githubUsername String?
+  avatarUrl      String?
+  createdAt      DateTime   @default(now())
+  posts          Post[]
+  comments       Comment[]
+  reactions      Reaction[]
+  following      Follow[]   @relation("UserFollowing")
+  followers      Follow[]   @relation("UserFollowers")
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  authorId    String
+  content     String
+  codeSnippet String?
+  language    String?
+  isQuestion  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  reactions   Reaction[]
+
+  @@index([authorId, createdAt])
+  @@index([createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@index([authorId])
+}
+
+model Reaction {
+  id        String       @id @default(cuid())
+  postId    String
+  authorId  String
+  type      ReactionType
+  createdAt DateTime     @default(now())
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, authorId])
+  @@index([authorId])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followingId])
+}
