@@ -40,7 +40,7 @@ A validação é compartilhada entre os formulários e o servidor.
 
 O middleware protege `/feed` e seus caminhos filhos. Ao adicionar novas áreas
 privadas, inclua-as no `matcher` de `middleware.ts` e valide a sessão no servidor
-com `getServerSession(authOptions)`, como em `app/feed/page.tsx`.
+com `getServerSession(authOptions)`, como em `app/(social)/feed/page.tsx`.
 Login e registro redirecionam usuários já autenticados ao feed.
 
 Referências: [Credentials Provider](https://next-auth.js.org/providers/credentials)
@@ -53,11 +53,20 @@ Use os links Anterior/Próxima (`/feed?page=2`) para navegar. O formulário no t
 permite publicar texto, adicionar um bloco de código com linguagem e marcar uma dúvida.
 O texto é obrigatório (até 5.000 caracteres); o código é opcional (até 20.000).
 
+O feed permite combinar a aba Dúvidas com uma linguagem, por exemplo
+`/feed?tech=javascript&type=question`. O dropdown usa as linguagens distintas dos
+posts no banco. O contador da aba mostra as dúvidas da linguagem selecionada
+(ou todas as dúvidas quando não há filtro de linguagem).
+As seleções usam `router.push` sem reload e ficam na URL para compartilhar e
+voltar/avançar. Trocar um filtro volta à primeira página; os links de paginação
+preservam os filtros. “Todos” remove o filtro de dúvidas, mantendo a linguagem;
+“Limpar filtros” restaura a listagem completa. Publicar mantém os filtros ativos.
+
 Cada `PostCard` mostra autor/avatar, data relativa, conteúdo, marcador de dúvida
 e código com destaque de sintaxe por highlight.js. O destaque é gerado no servidor
 com HTML escapado; o código enviado pelo usuário não é executado.
 
-As Server Actions em `app/feed/actions.ts` exigem sessão e validam os dados.
+As Server Actions em `app/(social)/feed/actions.ts` exigem sessão e validam os dados.
 O autor é sempre obtido da sessão, e edição/exclusão filtram simultaneamente
 por ID do post e ID do autor no banco. Apenas o autor vê esses controles.
 A exclusão pede confirmação e remove também comentários/reações relacionados,
@@ -78,7 +87,7 @@ destaque da escolha atual. Escolher outro tipo troca a reação; repetir o tipo
 selecionado remove a reação. A restrição única de usuário/post já existente e
 uma transação serializável protegem a troca contra concorrência entre abas.
 
-As ações em `app/feed/interaction-actions.ts` exigem sessão e validam as entradas.
+As ações em `app/(social)/feed/interaction-actions.ts` exigem sessão e validam as entradas.
 Os formulários usam `action` com `useFormState`, recebem erros tratados e bloqueiam
 envios enquanto aguardam a resposta. Os componentes atualizam o estado local após
 sucesso e as ações revalidam `/feed`, sem recarregar a página. Os models existentes
@@ -87,8 +96,8 @@ sucesso e as ações revalidam `/feed`, sem recarregar a página. Os models exis
 ## Perfis públicos
 
 `/perfil/[username]` mostra nome, avatar, bio, seguidores/seguindo e posts paginados.
-Visitantes podem ler posts e comentários; ações exigem sessão. O header do feed
-e dos perfis inclui “Meu perfil” para quem está logado.
+Visitantes podem ler posts e comentários; ações exigem sessão. A navbar leva ao
+próprio perfil. O botão “Sair” aparece somente no perfil do usuário logado.
 
 O cadastro exige um username único de 3 a 30 caracteres (letras, números, hífen
 ou sublinhado), normalizado para minúsculas. A migration
@@ -104,7 +113,41 @@ recentemente atualizados, com cache de 5 minutos e timeout de 5 segundos.
 Erros de rede, rate limit e usuário inexistente exibem uma mensagem discreta.
 Referência: [API de repositórios do GitHub](https://docs.github.com/en/rest/repos/repos#list-repositories-for-a-user).
 
-## Estrutura de pastas
+## Seguidores e notificações
+
+Nome/avatar dos autores nos posts e comentários levam ao perfil pelo username.
+As contagens do perfil abrem `/perfil/[username]/seguidores` e
+`/perfil/[username]/seguindo`, listas públicas paginadas de 20 pessoas.
+Ao consultar a própria lista, o usuário pode seguir/deixar de seguir diretamente.
+
+O sino nos headers mostra a contagem de notificações não lidas e abre
+`/notificacoes`, protegida por sessão. Um novo vínculo de seguir cria uma
+notificação `FOLLOW` na mesma transação; repetir a ação não cria duplicatas.
+Deixar de seguir não apaga notificações históricas. Seguir novamente cria um novo aviso.
+Ao visualizar a lista, uma Server Action marca somente os itens exibidos
+pertencentes ao destinatário como lidos e revalida o badge, sem reload.
+Não há polling em tempo real; novos avisos aparecem na próxima navegação/revalidação.
+
+A migration `20260922010000_notifications` cria o model `Notification`, relações
+com destinatário/ator e índices para listagem e contagem de não lidas.
+Em outros ambientes, aplique com `npx prisma migrate deploy`.
+
+## Navegação e busca
+
+O layout compartilhado em `app/(social)/layout.tsx` mantém a navbar nas páginas
+autenticadas: Feed, Busca, Chats e Perfil. No desktop ela é uma barra lateral
+fixa; no mobile, uma barra inferior com espaço reservado para não cobrir conteúdo.
+Os links usam navegação do Next.js e destacam a seção atual. Perfis continuam
+públicos, sem a navbar para visitantes; login e registro ficam no grupo `(auth)`.
+
+`/buscar` exige sessão e pesquisa nome ou username por correspondência parcial,
+sem diferenciar maiúsculas. O campo espera 300 ms, cancela buscas anteriores,
+ignora respostas antigas e trata falhas com nova tentativa. O endpoint
+`/api/usuarios?q=...` retorna até 20 pessoas com dados públicos e o vínculo do
+usuário atual. Os resultados reutilizam as Server Actions de seguir/deixar de seguir.
+`/chats` é uma página protegida com o placeholder “Em breve”.
+
+## Organização
 
 ```text
 app/         Layout raiz, página inicial e estilos globais

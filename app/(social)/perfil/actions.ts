@@ -19,15 +19,22 @@ export async function setFollow(_previous: FollowResult | null, data: FormData):
     try {
       const summary = await prisma.$transaction(async tx => {
         if (!await tx.user.findUnique({ where: { id: followingId }, select: { id: true } })) return null;
-        if (intent === "follow") await tx.follow.upsert({
-          where: { followerId_followingId: { followerId, followingId } },
-          create: { followerId, followingId }, update: {},
-        });
+        if (intent === "follow") {
+          const where = { followerId_followingId: { followerId, followingId } };
+          const existing = await tx.follow.findUnique({ where, select: { followerId: true } });
+          if (!existing) {
+            await tx.follow.upsert({ where, create: { followerId, followingId }, update: {} });
+            await tx.notification.create({ data: { userId: followingId, actorId: followerId, type: "FOLLOW" } });
+          }
+        }
         else await tx.follow.deleteMany({ where: { followerId, followingId } });
         return { following: intent === "follow", followers: await tx.follow.count({ where: { followingId } }) };
       }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5000, timeout: 10000 });
       if (!summary) return { success: false, error: "Perfil não encontrado." };
       revalidatePath("/perfil/[username]", "page");
+      revalidatePath("/perfil/[username]/[relationship]", "page");
+      revalidatePath("/notificacoes");
+      revalidatePath("/feed");
       return { success: true, summary };
     } catch (error) {
       const conflict = error instanceof Prisma.PrismaClientKnownRequestError && ["P2034", "P2002"].includes(error.code);

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { createComment, deleteComment } from "@/app/feed/interaction-actions";
+import { createComment, deleteComment } from "@/app/(social)/feed/interaction-actions";
 import type { CommentView } from "@/lib/interactions";
 import { Avatar } from "./avatar";
 import Link from "next/link";
@@ -38,10 +38,10 @@ export function CommentList({ postId, currentUserId, initialComments }: { postId
     <h3 id={headingId} className="text-sm font-semibold">Comentários ({comments.length})</h3>
     {comments.length ? <ul className="mt-4 space-y-4">
       {comments.map(comment => <li key={comment.id} className="flex items-start gap-3">
-        <Avatar name={comment.author.name} url={comment.author.avatarUrl} />
+        <Link href={`/perfil/${encodeURIComponent(comment.author.username)}`} aria-label={`Perfil de ${comment.author.name}`}><Avatar name={comment.author.name} url={comment.author.avatarUrl} /></Link>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2">
-            <span className="break-words text-sm font-semibold">{comment.author.name}</span>
+            <Link href={`/perfil/${encodeURIComponent(comment.author.username)}`} className="break-words text-sm font-semibold hover:underline">{comment.author.name}</Link>
             <time dateTime={comment.createdAt} className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</time>
           </div>
           <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">{comment.content}</p>

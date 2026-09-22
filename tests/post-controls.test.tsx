@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
   actions: new Map<string, (data: FormData) => Promise<void>>(),
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: mocks.refresh, replace: mocks.replace }) }));
-vi.mock("@/app/feed/actions", () => ({ deletePostFromForm: mocks.remove, updatePostFromForm: mocks.update, createPostFromForm: mocks.create }));
+vi.mock("@/app/(social)/feed/actions", () => ({ deletePostFromForm: mocks.remove, updatePostFromForm: mocks.update, createPostFromForm: mocks.create }));
 
 // React 18 puro não contém o transporte de Server Actions do Next.js.
 // O teste simula esse transporte, mantendo o DOM e os cliques reais no jsdom.
@@ -63,6 +63,16 @@ function setup() {
 }
 
 describe("controles de posts", () => {
+  it("publicar mantém os filtros e a página atuais", async () => {
+    window.history.replaceState({}, "", "/feed?tech=python&type=question&page=2");
+    render(<PostForm />);
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("Compartilhe com a comunidade"), "Novo post");
+    await user.click(screen.getByRole("button", { name: "Publicar" }));
+    await screen.findByRole("status");
+    expect(window.location.search).toBe("?tech=python&type=question&page=2");
+    expect(mocks.replace).not.toHaveBeenCalled();
+  });
   it("publica sem adicionar os campos à URL nem iniciar outra navegação", async () => {
     render(<PostForm />);
     const before = window.location.href;

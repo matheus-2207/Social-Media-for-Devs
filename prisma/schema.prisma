@@ -29,6 +29,26 @@ model User {
   reactions      Reaction[]
   following      Follow[]   @relation("UserFollowing")
   followers      Follow[]   @relation("UserFollowers")
+  notifications Notification[] @relation("NotificationRecipient")
+  sentNotifications Notification[] @relation("NotificationActor")
+}
+
+enum NotificationType {
+  FOLLOW
+}
+
+model Notification {
+  id String @id @default(cuid())
+  userId String
+  actorId String
+  type NotificationType
+  read Boolean @default(false)
+  createdAt DateTime @default(now())
+  user User @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor User @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
 }
 
 model Post {

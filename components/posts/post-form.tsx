@@ -2,12 +2,10 @@
 
 import { useEffect, useId, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { useRouter } from "next/navigation";
-import { createPostFromForm, updatePostFromForm } from "@/app/feed/actions";
+import { createPostFromForm, updatePostFromForm } from "@/app/(social)/feed/actions";
 import { languages, type EditablePost, type PresentedPost } from "@/lib/validation/post";
 
 export function PostForm({ post, onClose, onSaved }: { post?: EditablePost; onClose?: () => void; onSaved?: (post: PresentedPost) => void }) {
-  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const action = post ? updatePostFromForm : createPostFromForm;
   const [state, formAction] = useFormState(action, null);
@@ -21,10 +19,9 @@ export function PostForm({ post, onClose, onSaved }: { post?: EditablePost; onCl
       onClose?.();
     } else {
       formRef.current?.reset();
-      if (window.location.search) router.replace("/feed", { scroll: false });
     }
     // A Server Action já revalida o feed; não iniciar uma segunda navegação.
-  }, [state, post, onClose, onSaved, router]);
+  }, [state, post, onClose, onSaved]);
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">

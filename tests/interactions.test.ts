@@ -6,7 +6,7 @@ vi.mock("next-auth", () => ({ getServerSession: mocks.session }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/auth", () => ({ authOptions: {} }));
 vi.mock("@/lib/prisma", () => ({ prisma: { comment: { create: mocks.create, deleteMany: mocks.deleteMany }, $transaction: mocks.transaction } }));
-import { createComment, deleteComment, toggleReaction } from "@/app/feed/interaction-actions";
+import { createComment, deleteComment, toggleReaction } from "@/app/(social)/feed/interaction-actions";
 import { summarizeReactions } from "@/lib/interactions";
 
 const tx = { post: { findUnique: mocks.post }, reaction: { findUnique: mocks.find, upsert: mocks.upsert, delete: mocks.remove, groupBy: mocks.groupBy } };

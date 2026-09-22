@@ -10,7 +10,7 @@ vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/auth", () => ({ authOptions: {} }));
 vi.mock("@/lib/prisma", () => ({ prisma: { post: mocks } }));
 
-import { createPost, updatePost, deletePost, createPostFromForm, updatePostFromForm, deletePostFromForm } from "@/app/feed/actions";
+import { createPost, updatePost, deletePost, createPostFromForm, updatePostFromForm, deletePostFromForm } from "@/app/(social)/feed/actions";
 import { postSchema } from "@/lib/validation/post";
 import { getFeedPage, parsePage } from "@/lib/posts";
 import { highlightCode } from "@/lib/highlight-code";
@@ -186,7 +186,7 @@ describe("paginação do feed", () => {
     expect(mocks.findMany).toHaveBeenCalledWith({
       skip: 10, take: 10, orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
-        author: { select: { id: true, name: true, avatarUrl: true } },
+        author: { select: { id: true, name: true, username: true, avatarUrl: true } },
         comments: { select: commentSelect, orderBy: [{ createdAt: "asc" }, { id: "asc" }] },
         reactions: { select: { authorId: true, type: true } },
       },

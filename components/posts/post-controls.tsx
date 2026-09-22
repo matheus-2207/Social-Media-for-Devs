@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { deletePostFromForm } from "@/app/feed/actions";
+import { deletePostFromForm } from "@/app/(social)/feed/actions";
 import type { EditablePost, PresentedPost } from "@/lib/validation/post";
 import { PostForm } from "./post-form";
 

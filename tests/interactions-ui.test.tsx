@@ -6,8 +6,8 @@ import type { CommentResult, CommentView, ReactionResult } from "@/lib/interacti
 import type { FollowResult } from "@/lib/follow";
 
 const mocks = vi.hoisted(() => ({ follow: vi.fn(), create: vi.fn(), remove: vi.fn(), react: vi.fn(), actions: new Map<string, (data: FormData) => Promise<void>>() }));
-vi.mock("@/app/perfil/actions", () => ({ setFollow: mocks.follow }));
-vi.mock("@/app/feed/interaction-actions", () => ({ createComment: mocks.create, deleteComment: mocks.remove, toggleReaction: mocks.react }));
+vi.mock("@/app/(social)/perfil/actions", () => ({ setFollow: mocks.follow }));
+vi.mock("@/app/(social)/feed/interaction-actions", () => ({ createComment: mocks.create, deleteComment: mocks.remove, toggleReaction: mocks.react }));
 // Simula apenas o transporte ausente no React 18 puro. O teste HTTP cobre o Next real.
 vi.mock("react-dom", async importOriginal => {
   const original = await importOriginal<typeof import("react-dom")>();
@@ -24,7 +24,7 @@ import { CommentList } from "@/components/posts/comment-list";
 import { ReactionBar } from "@/components/posts/reaction-bar";
 import { ProfileFollow } from "@/components/profile-follow";
 
-const comment: CommentView = { id: "c1", postId: "p1", authorId: "u1", content: "Primeiro comentário", createdAt: "2026-09-21T12:00:00.000Z", author: { name: "Dev", avatarUrl: null } };
+const comment: CommentView = { id: "c1", postId: "p1", authorId: "u1", content: "Primeiro comentário", createdAt: "2026-09-21T12:00:00.000Z", author: { username: "dev", name: "Dev", avatarUrl: null } };
 const other = { ...comment, id: "c2", authorId: "u2", content: "Segundo comentário", createdAt: "2026-09-21T13:00:00.000Z" };
 function submit(event: Event) {
   event.preventDefault();
@@ -76,6 +76,12 @@ it("ordena comentários e oferece exclusão apenas ao autor", () => {
   render(<CommentList postId="p1" currentUserId="u1" initialComments={[other, comment]} />);
   expect(screen.getAllByRole("listitem").map(item => item.querySelector("p")?.textContent)).toEqual([comment.content, other.content]);
   expect(screen.getAllByRole("button", { name: "Excluir comentário" })).toHaveLength(1);
+  expect(screen.getAllByRole("link", { name: "Dev" })[0].getAttribute("href")).toBe("/perfil/dev");
+});
+it("contagens do perfil apontam para as listas públicas", () => {
+  render(<ProfileFollow userId="target" username="ana-dev" canFollow={false} initialSummary={{ following: false, followers: 2 }} followingCount={7} />);
+  expect(screen.getByRole("link", { name: "2 seguidores" }).getAttribute("href")).toBe("/perfil/ana-dev/seguidores");
+  expect(screen.getByRole("link", { name: "7 seguindo" }).getAttribute("href")).toBe("/perfil/ana-dev/seguindo");
 });
 it("adiciona texto seguro, limpa o campo e exclui localmente sem alterar a URL", async () => {
   const added = { ...comment, id: "c3", content: "<script>test</script>" };

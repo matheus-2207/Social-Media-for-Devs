@@ -31,7 +31,7 @@ async function loadPosts(authorId: string, requestedPage: number) {
   const posts = await prisma.post.findMany({ where: { authorId }, skip: (page - 1) * 10, take: 10,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     include: {
-      author: { select: { id: true, name: true, avatarUrl: true } },
+      author: { select: { id: true, name: true, username: true, avatarUrl: true } },
       comments: { select: commentSelect, orderBy: [{ createdAt: "asc" }, { id: "asc" }] },
       reactions: { select: { authorId: true, type: true } },
     },

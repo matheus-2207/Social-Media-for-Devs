@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { setFollow } from "@/app/perfil/actions";
+import { setFollow } from "@/app/(social)/perfil/actions";
 import type { FollowSummary } from "@/lib/follow";
+import Link from "next/link";
 
-export function ProfileFollow({ userId, canFollow, initialSummary, followingCount }: { userId: string; canFollow: boolean; initialSummary: FollowSummary; followingCount: number }) {
+export function ProfileFollow({ userId, username, compact = false, canFollow, initialSummary, followingCount }: { userId: string; username?: string; compact?: boolean; canFollow: boolean; initialSummary: FollowSummary; followingCount: number }) {
   const [state, action] = useFormState(setFollow, null);
   const [confirmed, setConfirmed] = useState<FollowSummary | null>(null);
   const handled = useRef<typeof state>(null);
@@ -19,7 +20,7 @@ export function ProfileFollow({ userId, canFollow, initialSummary, followingCoun
   }, [initialSummary, confirmed]);
   const summary = confirmed ?? initialSummary;
   return <div className="mt-4 space-y-4">
-    <p className="text-sm text-slate-600"><strong>{summary.followers}</strong> seguidores <span className="mx-2">·</span> <strong>{followingCount}</strong> seguindo</p>
+    {!compact && <p className="text-sm text-slate-600">{username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguidores`} className="hover:underline"><strong>{summary.followers}</strong> seguidores</Link> : <><strong>{summary.followers}</strong> seguidores</>} <span className="mx-2">·</span> {username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguindo`} className="hover:underline"><strong>{followingCount}</strong> seguindo</Link> : <><strong>{followingCount}</strong> seguindo</>}</p>}
     {canFollow && <form action={action} data-follow>
       <input type="hidden" name="userId" value={userId} />
       <FollowButton following={summary.following} />

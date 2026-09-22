@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { toggleReaction } from "@/app/feed/interaction-actions";
+import { toggleReaction } from "@/app/(social)/feed/interaction-actions";
 import { reactionOptions, type ReactionSummary } from "@/lib/interactions";
 
 export function ReactionBar({ postId, initialSummary, readOnly = false }: { postId: string; initialSummary: ReactionSummary; readOnly?: boolean }) {

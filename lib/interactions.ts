@@ -19,7 +19,7 @@ export type CommentView = {
   authorId: string;
   content: string;
   createdAt: string;
-  author: { name: string; avatarUrl: string | null };
+  author: { name: string; username: string; avatarUrl: string | null };
 };
 export type ReactionSummary = { counts: Record<ReactionKind, number>; selected: ReactionKind | null };
 export type CommentResult = { success: false; error: string } | { success: true; comment: CommentView } | { success: true; deletedCommentId: string };

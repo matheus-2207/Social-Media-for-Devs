@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-const mocks = vi.hoisted(() => ({ session: vi.fn(), revalidate: vi.fn(), user: vi.fn(), relationship: vi.fn(), posts: vi.fn(), postCount: vi.fn(), transaction: vi.fn(), upsert: vi.fn(), remove: vi.fn(), count: vi.fn(), fetch: vi.fn() }));
+const mocks = vi.hoisted(() => ({ session: vi.fn(), revalidate: vi.fn(), user: vi.fn(), relationship: vi.fn(), posts: vi.fn(), postCount: vi.fn(), transaction: vi.fn(), notification: vi.fn(), upsert: vi.fn(), remove: vi.fn(), count: vi.fn(), fetch: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("next-auth", () => ({ getServerSession: mocks.session }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
@@ -9,13 +9,13 @@ vi.mock("@/lib/prisma", () => ({ prisma: {
 } }));
 import { getProfile, getProfilePosts } from "@/lib/profile";
 import { getGithubRepositories } from "@/lib/github";
-import { setFollow } from "@/app/perfil/actions";
+import { setFollow } from "@/app/(social)/perfil/actions";
 const form = (intent = "follow", userId = "target") => { const data = new FormData(); data.set("intent", intent); data.set("userId", userId); data.set("followerId", "spoofed"); return data; };
 beforeEach(() => {
   vi.resetAllMocks(); vi.stubGlobal("fetch", mocks.fetch);
   mocks.session.mockResolvedValue({ user: { id: "viewer" } });
   mocks.user.mockResolvedValue({ id: "target", username: "ana", _count: { followers: 2, following: 3 } });
-  mocks.transaction.mockImplementation(callback => callback({ user: { findUnique: mocks.user }, follow: { upsert: mocks.upsert, deleteMany: mocks.remove, count: mocks.count } }));
+  mocks.transaction.mockImplementation(callback => callback({ user: { findUnique: mocks.user }, notification: { create: mocks.notification }, follow: { findUnique: mocks.relationship, upsert: mocks.upsert, deleteMany: mocks.remove, count: mocks.count } }));
   mocks.count.mockResolvedValue(3);
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -43,11 +43,24 @@ it("seguir é idempotente, usa autoria da sessão e revalida perfis", async () =
   expect(await setFollow(null, form())).toEqual({ success: true, summary: { following: true, followers: 3 } });
   expect(mocks.upsert).toHaveBeenCalledWith({ where: { followerId_followingId: { followerId: "viewer", followingId: "target" } }, create: { followerId: "viewer", followingId: "target" }, update: {} });
   expect(mocks.revalidate).toHaveBeenCalledWith("/perfil/[username]", "page");
+  expect(mocks.notification).toHaveBeenCalledWith({ data: { userId: "target", actorId: "viewer", type: "FOLLOW" } });
+});
+it("não duplica notificações ao seguir uma pessoa já seguida", async () => {
+  mocks.relationship.mockResolvedValue({ followerId: "viewer" });
+  expect((await setFollow(null, form())).success).toBe(true);
+  expect(mocks.upsert).not.toHaveBeenCalled();
+  expect(mocks.notification).not.toHaveBeenCalled();
+});
+it("propaga falha da notificação à transação de seguir", async () => {
+  mocks.notification.mockRejectedValue(new Error("notification failure"));
+  expect((await setFollow(null, form())).success).toBe(false);
+  expect(mocks.revalidate).not.toHaveBeenCalled();
 });
 it("deixa de seguir somente a relação do usuário atual", async () => {
   expect(await setFollow(null, form("unfollow"))).toMatchObject({ success: true, summary: { following: false } });
   expect(mocks.remove).toHaveBeenCalledWith({ where: { followerId: "viewer", followingId: "target" } });
   expect(mocks.upsert).not.toHaveBeenCalled();
+  expect(mocks.notification).not.toHaveBeenCalled();
 });
 it("bloqueia auto-follow, entradas inválidas e visitantes", async () => {
   expect((await setFollow(null, form("follow", "viewer"))).success).toBe(false);

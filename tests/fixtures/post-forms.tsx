@@ -12,7 +12,7 @@ export default function PostFormsFixture() {
     <section id="create"><PostForm /></section>
     <section id="existing"><PostCardShell canEdit post={{ id: "integration-post", content: "Post de teste", codeSnippet: "const test = 1;", language: "javascript", isQuestion: false, highlightedCode: null }}><span>Autor de teste</span></PostCardShell></section>
     <section id="login"><AuthForm mode="login" /></section>
-    <CommentList postId="integration-post" currentUserId="user-1" initialComments={[{ id: "comment-1", postId: "integration-post", authorId: "user-1", content: "Comentário de teste", createdAt: "2026-09-21T12:00:00.000Z", author: { name: "Dev", avatarUrl: null } }]} />
+    <CommentList postId="integration-post" currentUserId="user-1" initialComments={[{ id: "comment-1", postId: "integration-post", authorId: "user-1", content: "Comentário de teste", createdAt: "2026-09-21T12:00:00.000Z", author: { username: "dev", name: "Dev", avatarUrl: null } }]} />
     <ReactionBar postId="integration-post" initialSummary={{ counts: { FUNCIONA: 0, CLEAN_CODE: 0, DUVIDOSO: 0 }, selected: null }} />
     <section id="register"><AuthForm mode="registro" /></section>
     <SignOutButton />

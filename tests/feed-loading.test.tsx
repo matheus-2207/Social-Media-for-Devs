@@ -5,8 +5,8 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 const db = vi.hoisted(() => ({ count: vi.fn(), findMany: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/prisma", () => ({ prisma: { post: db } }));
-import FeedLoading from "@/app/feed/loading";
-import FeedError from "@/app/feed/error";
+import FeedLoading from "@/app/(social)/feed/loading";
+import FeedError from "@/app/(social)/feed/error";
 import { getFeedPage } from "@/lib/posts";
 import { withTimeout } from "@/lib/with-timeout";
 

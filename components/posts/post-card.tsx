@@ -1,4 +1,5 @@
 import type { FeedPost } from "@/lib/posts";
+import Link from "next/link";
 import { highlightCode } from "@/lib/highlight-code";
 import { relativeDate } from "@/lib/format-date";
 import { Avatar } from "./avatar";
@@ -13,9 +14,9 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       <ReactionBar postId={post.id} initialSummary={summarizeReactions(post.reactions, currentUserId)} readOnly={!currentUserId} />
       <CommentList postId={post.id} currentUserId={currentUserId} initialComments={post.comments.map(comment => ({ ...comment, createdAt: comment.createdAt.toISOString() }))} />
     </>}>
-        <Avatar name={post.author.name} url={post.author.avatarUrl} />
+        <Link href={`/perfil/${encodeURIComponent(post.author.username)}`} aria-label={`Perfil de ${post.author.name}`}><Avatar name={post.author.name} url={post.author.avatarUrl} /></Link>
         <div className="min-w-0 flex-1">
-          <p className="break-words font-semibold">{post.author.name}</p>
+          <Link href={`/perfil/${encodeURIComponent(post.author.username)}`} className="break-words font-semibold hover:underline">{post.author.name}</Link>
           <time dateTime={post.createdAt.toISOString()} title={post.createdAt.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })} className="text-xs text-slate-500">{relativeDate(post.createdAt)}</time>
         </div>
     </PostCardShell>

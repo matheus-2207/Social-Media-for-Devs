@@ -9,7 +9,8 @@ import { parsePage } from "@/lib/posts";
 import { Avatar } from "@/components/posts/avatar";
 import { PostCard } from "@/components/posts/post-card";
 import { ProfileFollow } from "@/components/profile-follow";
-import { MyProfileLink } from "@/components/my-profile-link";
+import { NotificationBell } from "@/components/notification-bell";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function ProfilePage({ params, searchParams }: { params: { username: string }; searchParams: { page?: string | string[] } }) {
   const session = await getServerSession(authOptions);
@@ -21,12 +22,12 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
   return <main className="mx-auto max-w-3xl px-6 py-10">
     <header className="mb-8 flex items-center justify-between gap-4">
       <Link href={viewerId ? "/feed" : "/login"} className="font-semibold text-indigo-600">{viewerId ? "Feed" : "Entrar"}</Link>
-      {viewerId && <MyProfileLink userId={viewerId} />}
+      {viewerId && <div className="flex items-center gap-4"><NotificationBell userId={viewerId} />{viewerId === profile.id && <SignOutButton />}</div>}
     </header>
     <section className="rounded-2xl border border-slate-200 bg-white p-6" aria-label="Perfil">
       <div className="flex items-center gap-4"><Avatar name={profile.name} url={profile.avatarUrl} /><div><h1 className="break-words text-2xl font-bold">{profile.name}</h1><p className="text-sm text-slate-500">@{profile.username}</p></div></div>
       <p className="mt-4 whitespace-pre-wrap break-words text-slate-700">{profile.bio || "Ainda sem bio."}</p>
-      <ProfileFollow userId={profile.id} canFollow={Boolean(viewerId && viewerId !== profile.id)} initialSummary={{ following: profile.isFollowing, followers: profile._count.followers }} followingCount={profile._count.following} />
+      <ProfileFollow username={profile.username} userId={profile.id} canFollow={Boolean(viewerId && viewerId !== profile.id)} initialSummary={{ following: profile.isFollowing, followers: profile._count.followers }} followingCount={profile._count.following} />
     </section>
     {profile.githubUsername && <Suspense fallback={<p className="mt-6 text-sm text-slate-500">Carregando repositórios…</p>}><Repositories username={profile.githubUsername} /></Suspense>}
     <section className="mt-8 space-y-5" aria-label="Publicações do usuário">
