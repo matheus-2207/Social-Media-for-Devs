@@ -147,7 +147,19 @@ ignora respostas antigas e trata falhas com nova tentativa. O endpoint
 usuário atual. Os resultados reutilizam as Server Actions de seguir/deixar de seguir.
 `/chats` é uma página protegida com o placeholder “Em breve”.
 
-## Organização
+## Tema visual
+
+A aplicação usa tema escuro padrão com a paleta semântica de `tailwind.config.ts`:
+`canvas`, `surface`, `raised`, `inset`, `ink`, `muted`, `subtle` e azul `accent`.
+Cards, formulários e estados vazios compartilham essas cores; usernames, linguagens
+e código usam fonte monoespaçada. Botões e links têm estados de foco, hover e seleção.
+O feed é acessado pela navbar, sem links duplicados nos headers.
+
+`tests/design-contrast.test.ts` verifica contraste mínimo de 4,5:1 na paleta e
+nos tokens reais do highlight.js, incluindo os overrides locais e fundos de diff.
+Também detecta o retorno de classes de superfícies/textos da antiga paleta clara.
+
+## Diretórios
 
 ```text
 app/         Layout raiz, página inicial e estilos globais

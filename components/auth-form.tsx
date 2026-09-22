@@ -62,14 +62,14 @@ export function AuthForm({ mode, registered = false }: { mode: "login" | "regist
     }
   }
 
-  const inputClass = "mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100";
+  const inputClass = "input-control mt-2 w-full";
 
   return (
-    <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-      <p className="mb-6 text-sm font-semibold text-indigo-600">Social Media for Devs</p>
-      <h1 className="text-2xl font-bold">{isRegister ? "Crie sua conta" : "Entre na sua conta"}</h1>
-      <p className="mt-2 text-sm text-slate-600">{isRegister ? "Seu próximo encontro com a comunidade começa aqui." : "Conecte-se à comunidade de desenvolvedores."}</p>
-      {registered && <p role="status" className="mt-5 rounded-lg bg-green-50 p-3 text-sm text-green-800">Conta criada! Entre com seu email e senha.</p>}
+    <section className="w-full max-w-md rounded-lg border border-line bg-surface p-7 text-ink sm:p-9">
+      <p className="mb-6 text-sm font-semibold text-accent">Social Media for Devs</p>
+      <h1 className="page-title">{isRegister ? "Crie sua conta" : "Entre na sua conta"}</h1>
+      <p className="mt-2 text-sm text-muted">{isRegister ? "Seu próximo encontro com a comunidade começa aqui." : "Conecte-se à comunidade de desenvolvedores."}</p>
+      {registered && <p role="status" className="mt-5 rounded-lg bg-accent-soft p-3 text-sm text-accent">Conta criada! Entre com seu email e senha.</p>}
       <form method="post" action={isRegister ? "/api/registro" : "/api/auth/callback/credentials"} className="mt-6 space-y-5" onSubmit={handleSubmit} aria-busy={pending}>
         <fieldset disabled={!hydrated || pending} className="space-y-5 disabled:opacity-70">
           {isRegister && <div>
@@ -79,7 +79,7 @@ export function AuthForm({ mode, registered = false }: { mode: "login" | "regist
           {isRegister && <div>
             <label htmlFor="username" className="text-sm font-medium">Username</label>
             <input id="username" name="username" autoComplete="username" required minLength={3} maxLength={30} pattern="[a-zA-Z0-9][a-zA-Z0-9_\-]*" className={inputClass} aria-describedby="username-help" />
-            <p id="username-help" className="mt-2 text-xs text-slate-500">Seu identificador público: letras, números, hífen ou sublinhado.</p>
+            <p id="username-help" className="mt-2 text-xs text-subtle">Seu identificador público: letras, números, hífen ou sublinhado.</p>
           </div>}
           <div>
             <label htmlFor="email" className="text-sm font-medium">Email</label>
@@ -88,18 +88,18 @@ export function AuthForm({ mode, registered = false }: { mode: "login" | "regist
           <div>
             <label htmlFor="password" className="text-sm font-medium">Senha</label>
             <input id="password" name="password" type="password" autoComplete={isRegister ? "new-password" : "current-password"} required minLength={isRegister ? 8 : 1} maxLength={72} aria-describedby={isRegister ? "password-help" : undefined} className={inputClass} />
-            {isRegister && <p id="password-help" className="mt-2 text-xs text-slate-500">Use pelo menos 8 caracteres e no máximo 72 bytes.</p>}
+            {isRegister && <p id="password-help" className="mt-2 text-xs text-subtle">Use pelo menos 8 caracteres e no máximo 72 bytes.</p>}
           </div>
-          {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-          <button type="submit" className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait">
+          {error && <p role="alert" className="rounded-lg bg-danger-soft p-3 text-sm text-danger">{error}</p>}
+          <button type="submit" className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-white hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-wait">
             {pending ? "Aguarde…" : isRegister ? "Criar conta" : "Entrar"}
           </button>
         </fieldset>
       </form>
-      <noscript><p className="mt-4 text-sm text-red-700">Ative o JavaScript para entrar ou criar sua conta.</p></noscript>
-      <p className="mt-6 text-center text-sm text-slate-600">
+      <noscript><p className="mt-4 text-sm text-danger">Ative o JavaScript para entrar ou criar sua conta.</p></noscript>
+      <p className="mt-6 text-center text-sm text-muted">
         {isRegister ? "Já tem uma conta? " : "Ainda não tem conta? "}
-        <Link href={isRegister ? "/login" : "/registro"} className="font-semibold text-indigo-600 hover:underline">{isRegister ? "Entrar" : "Cadastre-se"}</Link>
+        <Link href={isRegister ? "/login" : "/registro"} className="font-semibold text-accent hover:underline">{isRegister ? "Entrar" : "Cadastre-se"}</Link>
       </p>
     </section>
   );

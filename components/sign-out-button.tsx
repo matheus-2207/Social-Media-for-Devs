@@ -23,7 +23,7 @@ export function SignOutButton() {
   }
 
   return <div>
-    <button type="button" disabled={!hydrated || pending} onClick={logout} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-60">{pending ? "Saindo…" : "Sair"}</button>
-    {error && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
+    <button type="button" disabled={!hydrated || pending} onClick={logout} className="btn-secondary">{pending ? "Saindo…" : "Sair"}</button>
+    {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
   </div>;
 }

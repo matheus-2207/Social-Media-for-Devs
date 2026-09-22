@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { createRequire } from "node:module";
 import postcss from "postcss";
 import { describe, expect, it } from "vitest";
@@ -55,8 +56,22 @@ function codeColors() {
 }
 
 describe("contraste do tema escuro", () => {
+  it("não deixa superfícies ou textos da paleta clara nos componentes da aplicação", () => {
+    function audit(directory: string) {
+      for (const entry of readdirSync(directory, { withFileTypes: true })) {
+        const path = join(directory, entry.name);
+        if (entry.isDirectory()) audit(path);
+        else if (/\.(tsx|css)$/.test(entry.name)) {
+          const source = readFileSync(path, "utf8");
+          expect(source, path).not.toMatch(/\bbg-white\b|\b(?:bg|text|border)-(?:gray|slate|zinc|neutral|stone|indigo)-\d{2,3}\b/);
+        }
+      }
+    }
+    audit("app");
+    audit("components");
+  });
   it("mantém texto normal, metadados e links legíveis em todas as superfícies", () => {
-    for (const background of ["canvas", "surface", "raised", "inset"]) {
+    for (const background of ["canvas", "surface", "raised", "inset", "accent-soft"]) {
       for (const foreground of ["ink", "muted", "subtle", "accent"]) {
         expectReadable(`${foreground}/${background}`, palette[foreground], palette[background]);
       }

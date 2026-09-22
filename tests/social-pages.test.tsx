@@ -32,11 +32,13 @@ it.each([null, { user: { id: "visitor" } }])("não mostra logout no perfil para 
   render(await ProfilePage(props));
   expect(screen.queryByRole("button", { name: "Sair" })).toBeNull();
   expect(screen.queryByText("Meu perfil")).toBeNull();
+  expect(screen.queryByRole("link", { name: "Feed" })).toBeNull();
 });
 it("o logout funciona pelo próprio perfil", async () => {
   mocks.session.mockResolvedValue({ user: { id: "owner" } });
   mocks.signOut.mockResolvedValue(undefined);
   render(await ProfilePage(props));
+  expect(screen.queryByRole("link", { name: "Feed" })).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Sair" }));
   await waitFor(() => expect(mocks.signOut).toHaveBeenCalledWith({ callbackUrl: "/login" }));
 });

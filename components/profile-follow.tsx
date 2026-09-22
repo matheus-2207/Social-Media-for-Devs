@@ -20,11 +20,11 @@ export function ProfileFollow({ userId, username, compact = false, canFollow, in
   }, [initialSummary, confirmed]);
   const summary = confirmed ?? initialSummary;
   return <div className="mt-4 space-y-4">
-    {!compact && <p className="text-sm text-slate-600">{username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguidores`} className="hover:underline"><strong>{summary.followers}</strong> seguidores</Link> : <><strong>{summary.followers}</strong> seguidores</>} <span className="mx-2">·</span> {username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguindo`} className="hover:underline"><strong>{followingCount}</strong> seguindo</Link> : <><strong>{followingCount}</strong> seguindo</>}</p>}
+    {!compact && <p className="text-sm text-muted">{username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguidores`} className="hover:underline"><strong>{summary.followers}</strong> seguidores</Link> : <><strong>{summary.followers}</strong> seguidores</>} <span className="mx-2">·</span> {username ? <Link href={`/perfil/${encodeURIComponent(username)}/seguindo`} className="hover:underline"><strong>{followingCount}</strong> seguindo</Link> : <><strong>{followingCount}</strong> seguindo</>}</p>}
     {canFollow && <form action={action} data-follow>
       <input type="hidden" name="userId" value={userId} />
       <FollowButton following={summary.following} />
-      {state && !state.success && <p role="alert" className="mt-2 text-sm text-red-700">{state.error}</p>}
+      {state && !state.success && <p role="alert" className="mt-2 text-sm text-danger">{state.error}</p>}
       <span role="status" className="sr-only">{state?.success ? "Lista de seguidores atualizada." : ""}</span>
     </form>}
   </div>;
@@ -32,5 +32,5 @@ export function ProfileFollow({ userId, username, compact = false, canFollow, in
 
 function FollowButton({ following }: { following: boolean }) {
   const { pending } = useFormStatus();
-  return <button type="submit" name="intent" value={following ? "unfollow" : "follow"} disabled={pending} aria-pressed={following} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60">{pending ? "Aguarde…" : following ? "Deixar de seguir" : "Seguir"}</button>;
+  return <button type="submit" name="intent" value={following ? "unfollow" : "follow"} disabled={pending} aria-pressed={following} className="btn-primary aria-pressed:border-accent aria-pressed:bg-accent-soft aria-pressed:text-accent aria-pressed:hover:bg-raised">{pending ? "Aguarde…" : following ? "Deixar de seguir" : "Seguir"}</button>;
 }

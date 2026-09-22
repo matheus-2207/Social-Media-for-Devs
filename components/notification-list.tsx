@@ -18,11 +18,11 @@ export function NotificationList({ notifications }: { notifications: Item[] }) {
     return () => { active = false; };
   }, [unreadKey, retry]);
   return <>
-    {error && <p role="alert" className="mt-4 text-sm text-red-700">Não foi possível marcar como lidas. <button type="button" onClick={() => setRetry(value => value + 1)} className="underline">Tentar novamente</button></p>}
-    <ul className="mt-6 space-y-3">{notifications.map(item => <li key={item.id} className={`rounded-xl border p-4 ${item.read ? "border-slate-200 bg-white" : "border-indigo-200 bg-indigo-50"}`}>
-      <Link href={`/perfil/${encodeURIComponent(item.actor.username)}`} className="flex items-center gap-3 hover:underline"><Avatar name={item.actor.name} url={item.actor.avatarUrl} /><span><span className="font-semibold">{item.actor.name}</span> começou a seguir você<span className="block text-xs text-slate-500">@{item.actor.username}</span></span></Link>
-      <time dateTime={item.createdAt} className="mt-2 block text-xs text-slate-500">{new Date(item.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</time>
+    {error && <p role="alert" className="mt-4 text-sm text-danger">Não foi possível marcar como lidas. <button type="button" onClick={() => setRetry(value => value + 1)} className="underline">Tentar novamente</button></p>}
+    <ul className="mt-6 space-y-3">{notifications.map(item => <li key={item.id} className={`rounded-lg border p-5 text-muted ${item.read ? "border-line bg-surface" : "border-accent/40 bg-accent-soft"}`}>
+      <Link href={`/perfil/${encodeURIComponent(item.actor.username)}`} className="flex items-center gap-3 hover:underline"><Avatar name={item.actor.name} url={item.actor.avatarUrl} /><span><span className="font-semibold text-ink">{item.actor.name}</span> começou a seguir você<span className="mt-1 block font-mono text-xs text-subtle">@{item.actor.username}</span></span></Link>
+      <time dateTime={item.createdAt} className="mt-2 mt-1 block font-mono text-xs text-subtle">{new Date(item.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</time>
     </li>)}</ul>
-    {!notifications.length && <p className="mt-6 text-slate-500">Nenhuma notificação ainda.</p>}
+    {!notifications.length && <p className="mt-6 text-subtle">Nenhuma notificação ainda.</p>}
   </>;
 }
