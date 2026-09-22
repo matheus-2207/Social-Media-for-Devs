@@ -25,15 +25,15 @@ export function PostCardShell({ children, post, canEdit, footer }: { children: R
   const language = languages.find(([id]) => id === currentPost.language)?.[1] ?? currentPost.language ?? "Texto simples";
 
   return (
-    <article className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+    <article className="min-w-0 rounded-lg border border-line bg-surface p-5 sm:p-7">
       <header className="flex items-center gap-3">
         {children}
-        {currentPost.isQuestion && <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">Dúvida</span>}
+        {currentPost.isQuestion && <span className="shrink-0 rounded-md bg-raised px-3 py-1 text-xs font-medium text-muted">Dúvida</span>}
       </header>
-      <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-slate-800">{currentPost.content}</p>
-      {currentPost.codeSnippet && <div className="mt-4 overflow-hidden rounded-xl bg-[#0d1117]">
-        <div className="border-b border-slate-700 px-4 py-2 text-xs font-medium text-slate-300">{language}</div>
-        <pre className={`${styles.codeBlock} overflow-x-auto p-4 text-sm leading-6`}>
+      <p className="mt-5 whitespace-pre-wrap break-words text-[15px] leading-7 text-ink">{currentPost.content}</p>
+      {currentPost.codeSnippet && <div className="mt-5 overflow-hidden rounded-md border border-line bg-[#0d1117]">
+        <div className="border-b border-line px-5 py-2.5 font-mono text-xs text-muted">{language}</div>
+        <pre className={`${styles.codeBlock} overflow-x-auto p-5 font-mono text-[13px] leading-6`}>
           {currentPost.highlightedCode !== null ? <code className="hljs" dangerouslySetInnerHTML={{ __html: currentPost.highlightedCode }} /> : <code className="hljs">{currentPost.codeSnippet}</code>}
         </pre>
       </div>}

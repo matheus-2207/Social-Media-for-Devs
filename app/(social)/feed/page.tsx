@@ -18,26 +18,26 @@ export default async function FeedPage({ searchParams }: { searchParams: FeedSea
   if (requestedPage !== page) redirect(feedUrl(filters, page));
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <header className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Feed</h1>
+    <main className="page-shell">
+      <header className="page-header">
+        <h1 className="page-title">Feed</h1>
         <NotificationBell userId={session.user.id} />
       </header>
-      <p className="mt-6 text-slate-600">Bem-vindo, {session.user.name}!</p>
-      <section aria-label="Criar publicação" className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      <p className="mt-6 text-muted">Bem-vindo, {session.user.name}!</p>
+      <section aria-label="Criar publicação" className="mt-6 rounded-lg border border-line bg-surface p-5 sm:p-7">
         <PostForm />
       </section>
       <FeedFilters languages={options.languages} questionCount={options.questionCount} />
-      <section aria-label="Publicações recentes" className="mt-8 space-y-5">
+      <section aria-label="Publicações recentes" className="mt-10 space-y-6">
         <h2 className="text-lg font-semibold">Publicações recentes</h2>
         {posts.length ? posts.map((post) => <PostCard key={post.id} post={post} currentUserId={session.user.id} />) : (
-          <p className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">{filters.tech || filters.type ? "Nenhuma publicação encontrada com esses filtros." : "Nenhum post ainda. Compartilhe a primeira publicação!"}</p>
+          <p className="empty-state">{filters.tech || filters.type ? "Nenhuma publicação encontrada com esses filtros." : "Nenhum post ainda. Compartilhe a primeira publicação!"}</p>
         )}
       </section>
       {totalPages > 1 && <nav aria-label="Paginação do feed" className="mt-8 flex items-center justify-between gap-3 text-sm">
-        {page > 1 ? <Link href={feedUrl(filters, page - 1)} rel="prev" className="rounded-lg border border-slate-300 px-4 py-2 hover:bg-slate-50">Anterior</Link> : <span className="px-4 py-2 text-slate-400" aria-disabled="true">Anterior</span>}
+        {page > 1 ? <Link href={feedUrl(filters, page - 1)} rel="prev" className="rounded-lg border border-control px-4 py-2 hover:bg-raised">Anterior</Link> : <span className="px-4 py-2 text-subtle" aria-disabled="true">Anterior</span>}
         <span>Página {page} de {totalPages}</span>
-        {page < totalPages ? <Link href={feedUrl(filters, page + 1)} rel="next" className="rounded-lg border border-slate-300 px-4 py-2 hover:bg-slate-50">Próxima</Link> : <span className="px-4 py-2 text-slate-400" aria-disabled="true">Próxima</span>}
+        {page < totalPages ? <Link href={feedUrl(filters, page + 1)} rel="next" className="rounded-lg border border-control px-4 py-2 hover:bg-raised">Próxima</Link> : <span className="px-4 py-2 text-subtle" aria-disabled="true">Próxima</span>}
       </nav>}
     </main>
   );

@@ -27,8 +27,8 @@ export function PostForm({ post, onClose, onSaved }: { post?: EditablePost; onCl
     <form ref={formRef} action={formAction} className="space-y-4">
       {post && <input type="hidden" name="postId" value={post.id} />}
       <PostFormFields post={post} onClose={onClose ? () => { formRef.current?.reset(); onClose(); } : undefined} />
-      {state && !state.success && <p role="alert" className="text-sm text-red-700">{state.error}</p>}
-      {state?.success && !post && <p role="status" className="text-sm text-green-700">Post publicado!</p>}
+      {state && !state.success && <p role="alert" className="text-sm text-danger">{state.error}</p>}
+      {state?.success && !post && <p role="status" className="text-sm text-accent">Post publicado!</p>}
     </form>
   );
 }
@@ -36,7 +36,7 @@ export function PostForm({ post, onClose, onSaved }: { post?: EditablePost; onCl
 function PostFormFields({ post, onClose }: { post?: EditablePost; onClose?: () => void }) {
   const id = useId();
   const { pending } = useFormStatus();
-  const fieldClass = "mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100";
+  const fieldClass = "input-control mt-2 w-full";
 
   return (
       <fieldset disabled={pending} aria-busy={pending} className="min-w-0 space-y-4 disabled:opacity-60">
@@ -44,8 +44,8 @@ function PostFormFields({ post, onClose }: { post?: EditablePost; onClose?: () =
           <label htmlFor={`${id}-content`} className="text-sm font-medium">{post ? "Editar publicação" : "Compartilhe com a comunidade"}</label>
           <textarea id={`${id}-content`} name="content" required maxLength={5000} rows={4} defaultValue={post?.content} placeholder="O que você está construindo? Qual é a sua dúvida?" className={fieldClass} />
         </div>
-        <details open={post?.codeSnippet ? true : undefined} className="rounded-lg border border-slate-200 p-3">
-          <summary className="cursor-pointer text-sm font-medium text-indigo-700">Bloco de código (opcional)</summary>
+        <details open={post?.codeSnippet ? true : undefined} className="rounded-lg border border-line p-3">
+          <summary className="cursor-pointer text-sm font-medium text-accent">Bloco de código (opcional)</summary>
           <div className="mt-4 space-y-3">
             <div>
               <label htmlFor={`${id}-language`} className="text-sm font-medium">Linguagem</label>
@@ -60,12 +60,12 @@ function PostFormFields({ post, onClose }: { post?: EditablePost; onClose?: () =
           </div>
         </details>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="isQuestion" defaultChecked={post?.isQuestion} className="h-4 w-4 accent-indigo-600" />
+          <input type="checkbox" name="isQuestion" defaultChecked={post?.isQuestion} className="h-4 w-4 accent-primary" />
           É uma dúvida
         </label>
         <div className="flex flex-wrap gap-3">
-          <button type="submit" className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait">{pending ? "Salvando…" : post ? "Salvar alterações" : "Publicar"}</button>
-          {onClose && <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50">Cancelar</button>}
+          <button type="submit" className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-wait">{pending ? "Salvando…" : post ? "Salvar alterações" : "Publicar"}</button>
+          {onClose && <button type="button" onClick={onClose} className="rounded-lg border border-control px-4 py-2 text-sm hover:bg-raised">Cancelar</button>}
         </div>
       </fieldset>
   );

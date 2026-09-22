@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root { color-scheme: dark; }
+  body { @apply bg-canvas text-ink antialiased; }
+  ::selection { @apply bg-accent-soft text-ink; }
+  h1, h2, h3 { text-wrap: balance; }
+  h1 { letter-spacing: -0.035em; }
+  h2, h3 { letter-spacing: -0.015em; }
+  p { text-wrap: pretty; }
+  button, a, summary, input, textarea, select {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-duration: 160ms;
+  }
+  :where(a, button, summary, input, textarea, select):focus-visible {
+    outline: 2px solid #8eacff;
+    outline-offset: 4px;
+  }
+  input, textarea, select { @apply bg-inset text-ink; }
+  input::placeholder, textarea::placeholder { @apply text-subtle; opacity: 1; }
+  input[type="checkbox"] { @apply accent-primary; }
+  button:disabled, fieldset:disabled { cursor: wait; }
+  time { font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .page-shell { @apply mx-auto w-full max-w-3xl px-5 pb-16 pt-8 sm:px-8 sm:pt-12; }
+  .page-header { @apply mb-8 flex items-center justify-between gap-4 border-b border-line pb-6; }
+  .page-title { @apply text-3xl font-semibold leading-tight; }
+  .surface { @apply rounded-lg border border-line bg-surface; }
+  .input-control { @apply rounded-md border border-control bg-inset px-3.5 py-3 text-sm leading-6 text-ink placeholder:text-subtle focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20; }
+  .btn-primary { @apply rounded-md border border-transparent bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover active:bg-primary-hover disabled:opacity-60; }
+  .btn-secondary { @apply rounded-md border border-control bg-surface px-4 py-2.5 text-sm font-medium text-muted hover:border-accent hover:bg-raised hover:text-ink active:bg-accent-soft disabled:opacity-60; }
+  .empty-state { @apply rounded-lg border border-dashed border-control bg-surface px-6 py-12 text-center text-sm leading-6 text-muted; }
+}

@@ -20,7 +20,7 @@ export function FeedFilters({ languages, questionCount }: { languages: string[];
   function navigate(next: Filters) {
     startTransition(() => router.push(feedUrl(next), { scroll: false }));
   }
-  const buttonClass = (selected: boolean) => `rounded-lg border px-4 py-2 text-sm font-semibold ${selected ? "border-indigo-600 bg-indigo-100 text-indigo-800" : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"}`;
+  const buttonClass = (selected: boolean) => `rounded-lg border px-4 py-2 text-sm font-semibold ${selected ? "border-accent bg-accent-soft text-accent" : "border-control bg-surface text-muted hover:bg-raised"}`;
   return <section aria-label="Filtros de publicações" aria-busy={pending} className="mt-8 space-y-3">
     <fieldset disabled={pending} className="space-y-4 disabled:opacity-60">
       <legend className="sr-only">Filtrar publicações</legend>
@@ -30,15 +30,15 @@ export function FeedFilters({ languages, questionCount }: { languages: string[];
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <label htmlFor={id} className="text-sm font-medium">Tecnologia / linguagem</label>
-        <select id={id} value={filters.tech ?? ""} onChange={event => navigate({ ...filters, tech: event.target.value || undefined })} className={`rounded-lg border px-3 py-2 text-sm ${filters.tech ? "border-indigo-600 bg-indigo-50 text-indigo-800" : "border-slate-300 bg-white"}`}>
+        <select id={id} value={filters.tech ?? ""} onChange={event => navigate({ ...filters, tech: event.target.value || undefined })} className={`rounded-lg border px-3 py-2 text-sm ${filters.tech ? "border-accent bg-accent-soft text-accent" : "border-control bg-surface"}`}>
           <option value="">Todas as linguagens</option>
           {filters.tech && !languages.includes(filters.tech) && <option value={filters.tech}>{languageLabel(filters.tech)} (sem publicações)</option>}
           {languages.map(language => <option key={language} value={language}>{languageLabel(language)}</option>)}
         </select>
-        {(filters.tech || filters.type) && <button type="button" onClick={() => navigate({})} className="text-sm font-semibold text-indigo-600 hover:underline">Limpar filtros</button>}
+        {(filters.tech || filters.type) && <button type="button" onClick={() => navigate({})} className="text-sm font-semibold text-accent hover:underline">Limpar filtros</button>}
       </div>
     </fieldset>
-    <p role="status" className="text-sm text-slate-500">{pending ? "Atualizando publicações…" : `${filters.type ? "Dúvidas" : "Todos os posts"} · ${filters.tech ? languageLabel(filters.tech) : "Todas as linguagens"}`}</p>
-    {filters.tech && <p className="text-xs text-slate-500">O contador de dúvidas considera a linguagem selecionada.</p>}
+    <p role="status" className="text-sm text-subtle">{pending ? "Atualizando publicações…" : `${filters.type ? "Dúvidas" : "Todos os posts"} · ${filters.tech ? languageLabel(filters.tech) : "Todas as linguagens"}`}</p>
+    {filters.tech && <p className="text-xs text-subtle">O contador de dúvidas considera a linguagem selecionada.</p>}
   </section>;
 }
